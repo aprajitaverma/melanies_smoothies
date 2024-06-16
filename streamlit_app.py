@@ -16,12 +16,6 @@ name_on_order = st.text_input("Name on Smoothie:")
 if name_on_order:
     st.write("The name on your smoothie will be: ", name_on_order)
 
-# option = st.selectbox(
-#     "What is your favorite fruit?",
-#     ("Bananas", "Strawberries", "Peaches"))
-
-# st.write("Your favorite fruit is:", option)
-
 
 cnx = st.connection("snowflake")
 session = cnx.session()
@@ -40,6 +34,9 @@ if ingredients_list:
     ingredients_string = ''
     for fruit_chosen in ingredients_list:
         ingredients_string += fruit_chosen +' '
+        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/{}".format(fruit_chosen))
+        fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
+
         
     # st.write(ingredients_string)
 
@@ -53,6 +50,3 @@ if ingredients_list:
         session.sql(my_insert_stmt).collect()
         st.success('Your Smoothie is ordered!', icon="✅")
 
-fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
-# st.text(fruityvice_response.json())
-fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
